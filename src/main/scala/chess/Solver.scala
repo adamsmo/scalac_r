@@ -1,6 +1,8 @@
 import Figures._
 import com.typesafe.scalalogging._
 
+import scala.collection.Map
+
 /**
  * Created by adam on 17.04.2015.
  */
@@ -16,15 +18,12 @@ package object Solver extends LazyLogging {
    * @return
    */
   def solve(M: Int, N: Int, figures: List[(Int, Figure)]): List[Solution] = {
-    val figFlat = for (
-      (count, fig) <- figures;
-      i <- 1 to count
-    ) yield fig
+
 
     //first pic figures that covers larger area of the board
-    val sorted = figFlat.sortBy(-_.priority)
+    //val sorted = figFlat.sortBy(-_.priority)
 
-    solveAcc(Dimension(M, N), sorted, List())
+    solveAcc(Dimension(M, N), figures, List())
   }
 
   private def possible(dimension: Dimension, fig: Figure, position: Position, placements: List[Position]): Boolean =
@@ -33,14 +32,29 @@ package object Solver extends LazyLogging {
       case None => true
     }
 
-  private def solveAcc(dimension: Dimension, figures: List[Figure], placements: List[FigurePlacement]): List[Solution] = {
+  private def solveAcc(dimension: Dimension, figures: List[(Int, Figure)], placements: List[FigurePlacement]): List[Solution] = {
+
+    val figFlat = for (
+      (count, f) <- figures;
+      i <- 1 to count
+    ) yield f
+
     val newPlacements = for (
       x <- 1 to dimension.x;
       y <- 1 to dimension.y;
-      fig <- figures if possible(dimension, fig, Position(x, y), placements.map(_.position))
+      fig <- figFlat if possible(dimension, fig, Position(x, y), placements.map(_.position))
     ) yield FigurePlacement(fig, Position(x, y))
 
-    logger.debug(newPlacements.toSet.toList.toString)
+    val figCount: Map[Figure, Int] = figures.map { case (count, fig) => fig -> count }.toMap
+
+    val figurePositionMap = newPlacements.toSet.toList
+      .groupBy((fp: FigurePlacement) => fp.figure)
+      .filter { case (f, set) => figCount.contains(f) && figCount.get(f).get <= set.size }
+      .map { case (fig, figPlacement) => figPlacement.combinations(figCount(fig)).toList }
+
+    //group by figure type
+    logger.debug(figures.toString())
+    logger.debug(figurePositionMap.toString())
 
     List()
   }
