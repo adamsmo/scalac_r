@@ -1,10 +1,11 @@
 import Figures._
+import com.typesafe.scalalogging._
 
-package object Solver {
+/**
+ * Created by adam on 17.04.2015.
+ */
+package object Solver extends LazyLogging {
 
-  /**
-   * Created by adam on 17.04.2015.
-   */
   type Solution = String
 
   /**
@@ -15,16 +16,32 @@ package object Solver {
    * @return
    */
   def solve(M: Int, N: Int, figures: List[(Int, Figure)]): List[Solution] = {
+    val figFlat = for (
+      (count, fig) <- figures;
+      i <- 1 to count
+    ) yield fig
+
     //first pic figures that covers larger area of the board
-    val sorted = figures.sortBy { case (_, Figure(priority, _)) => -priority }
-    solveAcc(M, N, sorted, List())
+    val sorted = figFlat.sortBy(-_.priority)
+
+    solveAcc(Dimension(M, N), sorted, List())
   }
 
-  private def solveAcc(M: Int, N: Int, figures: List[(Int, Figure)], placements: List[FigurePlacement]): List[Solution] = {
-    val board = (1 to M) map (x => (1 to N) map (y => (x, y))) flatMap (x => x)
+  private def possible(dimension: Dimension, fig: Figure, position: Position, placements: List[Position]): Boolean =
+    fig.getCovered(dimension, position) find (pos => placements.contains(pos)) match {
+      case Some(_) => false
+      case None => true
+    }
 
+  private def solveAcc(dimension: Dimension, figures: List[Figure], placements: List[FigurePlacement]): List[Solution] = {
+    val newPlacements = for (
+      x <- 1 to dimension.x;
+      y <- 1 to dimension.y;
+      fig <- figures if possible(dimension, fig, Position(x, y), placements.map(_.position))
+    ) yield FigurePlacement(fig, Position(x, y))
 
-    println(board)
+    logger.debug(newPlacements.toSet.toList.toString)
+
     List()
   }
 
