@@ -1,31 +1,35 @@
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import Figures._
 
 /**
  * Created by adam on 17.04.2015.
  */
 
-class Test extends FunSuite {
+class Test extends FunSuite with Matchers {
 
-  test("sentenceOccurrences: abcd e") {
+  test("example with 3x3, 2 Kings, 1 Rook") {
     val result = Solver.solve(3, 3, List((King, 2), (Rook, 1)))
-    val expected = List(
-      """K-K
-        |---
-        |-R-""".stripMargin,
 
-      """K--
-        |--R
-        |k--""".stripMargin,
+    result should have size 4
 
-      """K--
-        |--R
-        |K--""".stripMargin,
+    result should contain
+    """K-K
+      |---
+      |-R-""".stripMargin
 
-      """K-K
-        |---
-        |-R-""".stripMargin
-    )
-    assert(result === expected)
+    result should contain
+    """K--
+      |--R
+      |k--""".stripMargin
+
+    result should contain
+    """--K
+      |R--
+      |--K""".stripMargin
+
+    result should contain
+    """-R-
+      |---
+      |K-K""".stripMargin
   }
 }
