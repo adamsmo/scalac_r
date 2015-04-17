@@ -8,7 +8,7 @@ import Figures._
 class Test extends FunSuite with Matchers {
 
   test("example with 3x3, 2 Kings, 1 Rook") {
-    val result = Solver.solve(3, 3, List((King, 2), (Rook, 1)))
+    val result = Solver.solve(3, 3, List((2, King), (2, Rook)))
 
     result should have size 4
 
