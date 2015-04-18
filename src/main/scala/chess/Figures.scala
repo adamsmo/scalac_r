@@ -13,7 +13,7 @@ package object Figures {
     def right = Position(x, y + 1)
   }
 
-  case class Dimension(x: Int, y: Int) {
+  case class Board(x: Int, y: Int) {
     def inBound(pos: Position): Boolean = pos.x > 0 && pos.x <= x && pos.y > 0 && pos.y <= y
 
     lazy val positions = {
@@ -31,7 +31,7 @@ package object Figures {
    * @param priority - lower priority means that Figure covers smaller area of board
    */
   abstract case class Figure(priority: Int, short: String) {
-    def getCovered(dimension: Dimension, position: Position): List[Position]
+    def getCovered(board: Board, position: Position): List[Position]
 
     def positions(position: Position, direction: Position => Position): Stream[Position] = {
       lazy val result: Stream[Position] = direction(position) #:: result.map(direction)
@@ -42,50 +42,50 @@ package object Figures {
   }
 
   object King extends Figure(0, "K") {
-    def getCovered(dimension: Dimension, position: Position): List[Position] = {
+    def getCovered(board: Board, position: Position): List[Position] = {
       List(position, position.up, position.down, position.left, position.right,
-        position.left.up, position.left.down, position.right.up, position.right.down).filter(dimension.inBound)
+        position.left.up, position.left.down, position.right.up, position.right.down).filter(board.inBound)
     }
   }
 
   object Rook extends Figure(3, "R") {
-    def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      position :: positions(position, _.up).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down).takeWhile(dimension.inBound).toList ++
-        positions(position, _.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.right).takeWhile(dimension.inBound).toList
+    def getCovered(board: Board, position: Position): List[Position] = {
+      position :: positions(position, _.up).takeWhile(board.inBound).toList ++
+        positions(position, _.down).takeWhile(board.inBound).toList ++
+        positions(position, _.left).takeWhile(board.inBound).toList ++
+        positions(position, _.right).takeWhile(board.inBound).toList
     }
   }
 
   object Queen extends Figure(4, "Q") {
-    def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      position :: positions(position, _.up).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down).takeWhile(dimension.inBound).toList ++
-        positions(position, _.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.right).takeWhile(dimension.inBound).toList ++
-        positions(position, _.up.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.up.right).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down.right).takeWhile(dimension.inBound).toList
+    def getCovered(board: Board, position: Position): List[Position] = {
+      position :: positions(position, _.up).takeWhile(board.inBound).toList ++
+        positions(position, _.down).takeWhile(board.inBound).toList ++
+        positions(position, _.left).takeWhile(board.inBound).toList ++
+        positions(position, _.right).takeWhile(board.inBound).toList ++
+        positions(position, _.up.left).takeWhile(board.inBound).toList ++
+        positions(position, _.up.right).takeWhile(board.inBound).toList ++
+        positions(position, _.down.left).takeWhile(board.inBound).toList ++
+        positions(position, _.down.right).takeWhile(board.inBound).toList
     }
   }
 
   object Bishop extends Figure(2, "B") {
-    def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      position :: positions(position, _.up.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.up.right).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down.left).takeWhile(dimension.inBound).toList ++
-        positions(position, _.down.right).takeWhile(dimension.inBound).toList
+    def getCovered(board: Board, position: Position): List[Position] = {
+      position :: positions(position, _.up.left).takeWhile(board.inBound).toList ++
+        positions(position, _.up.right).takeWhile(board.inBound).toList ++
+        positions(position, _.down.left).takeWhile(board.inBound).toList ++
+        positions(position, _.down.right).takeWhile(board.inBound).toList
     }
   }
 
   object Knight extends Figure(1, "N") {
-    def getCovered(dimension: Dimension, position: Position): List[Position] = {
+    def getCovered(board: Board, position: Position): List[Position] = {
       List(
         position, position.up.up.left, position.up.up.right,
         position.left.left.up, position.left.left.down,
         position.right.right.up, position.right.right.down,
-        position.down.down.left, position.down.down.right).filter(dimension.inBound)
+        position.down.down.left, position.down.down.right).filter(board.inBound)
     }
   }
 
