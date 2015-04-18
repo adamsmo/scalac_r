@@ -15,13 +15,16 @@ package object Figures {
 
   case class Dimension(x: Int, y: Int) {
     def inBound(pos: Position): Boolean = pos.x > 0 && pos.x <= x && pos.y > 0 && pos.y <= y
+
+    lazy val positions = {
+      for (
+        x <- 1 to x;
+        y <- 1 to y
+      ) yield Position(x, y)
+    }
   }
 
   case class FigurePlacement(figure: Figure, position: Position)
-
-  def trim(dimension: Dimension, positions: List[Position]) = {
-    positions.filter(dimension.inBound)
-  }
 
   /**
    *
@@ -40,8 +43,8 @@ package object Figures {
 
   object King extends Figure(0, "K") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      trim(dimension, List(position.up, position.down, position.left, position.right,
-        position.left.up, position.left.down, position.right.up, position.right.down))
+      List(position, position.up, position.down, position.left, position.right,
+        position.left.up, position.left.down, position.right.up, position.right.down).filter(dimension.inBound)
     }
   }
 
@@ -78,12 +81,11 @@ package object Figures {
 
   object Knight extends Figure(1, "N") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      trim(dimension, List(
-        position.up.up.left, position.up.up.right,
+      List(
+        position, position.up.up.left, position.up.up.right,
         position.left.left.up, position.left.left.down,
         position.right.right.up, position.right.right.down,
-        position.down.down.left, position.down.down.right)
-      )
+        position.down.down.left, position.down.down.right).filter(dimension.inBound)
     }
   }
 

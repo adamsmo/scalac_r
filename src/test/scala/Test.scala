@@ -46,4 +46,65 @@ class Test extends FunSuite with Matchers {
     result should have size 5
     result should contain allOf(Position(2, 2), Position(1, 1), Position(3, 1), Position(1, 3), Position(3, 3))
   }
+
+  test("Test board generation") {
+    val result = Dimension(3, 3).positions
+
+    val expected = List(
+      Position(1, 1), Position(1, 2), Position(1, 3),
+      Position(2, 1), Position(2, 2), Position(2, 3),
+      Position(3, 1), Position(3, 2), Position(3, 3))
+
+    result should contain theSameElementsAs expected
+  }
+
+  test("Queen board cover") {
+    val dimension: Dimension = Dimension(5, 5)
+    val result = Queen.getCovered(dimension, Position(3, 3))
+
+    val notCoveredByQueen = List(
+      Position(2, 1),
+      Position(4, 1),
+      Position(1, 2),
+      Position(1, 4),
+      Position(5, 2),
+      Position(5, 4),
+      Position(2, 5),
+      Position(4, 5))
+
+    val expected = dimension.positions.filter(!notCoveredByQueen.contains(_))
+
+    println(expected)
+
+    result should have size 17
+    result should contain theSameElementsAs expected
+  }
+
+  test("King board cover") {
+    val result = King.getCovered(Dimension(5, 5), Position(2, 2))
+
+    result should have size 9
+    result should contain allOf(
+      Position(1, 1), Position(1, 2), Position(1, 3),
+      Position(2, 1), Position(2, 2), Position(2, 3),
+      Position(3, 1), Position(3, 2), Position(3, 3)
+      )
+  }
+
+  test("Knight board cover") {
+    val result = Knight.getCovered(Dimension(5, 5), Position(3, 3))
+
+    result should have size 9
+    result should contain allOf(
+      Position(3, 3),
+      Position(2, 1),
+      Position(4, 1),
+      Position(1, 2),
+      Position(1, 4),
+      Position(5, 2),
+      Position(5, 4),
+      Position(2, 5),
+      Position(4, 5)
+      )
+  }
 }
