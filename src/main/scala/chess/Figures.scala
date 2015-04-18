@@ -31,7 +31,7 @@ package object Figures {
     def getCovered(dimension: Dimension, position: Position): List[Position]
 
     def positions(position: Position, direction: Position => Position): Stream[Position] = {
-      val result: Stream[Position] = direction(position) #:: result.map(direction)
+      lazy val result: Stream[Position] = direction(position) #:: result.map(direction)
       result
     }
 
@@ -56,22 +56,23 @@ package object Figures {
 
   object Queen extends Figure(4, "Q") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-
-      List()
+      position :: positions(position, _.up).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down).takeWhile(dimension.inBound).toList ++
+        positions(position, _.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.right).takeWhile(dimension.inBound).toList ++
+        positions(position, _.up.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.up.right).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down.right).takeWhile(dimension.inBound).toList
     }
   }
 
   object Bishop extends Figure(2, "B") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      lazy val upLeft: Stream[Position] = position.up.left #:: upLeft.map(p => p.up.left)
-      lazy val downLeft: Stream[Position] = position.down.left #:: downLeft.map(p => p.down.left)
-      lazy val upRight: Stream[Position] = position.up.right #:: upRight.map(p => p.up.right)
-      lazy val downRight: Stream[Position] = position.down.right #:: downRight.map(p => p.down.right)
-
-      position :: upLeft.takeWhile(dimension.inBound).toList ++
-        downLeft.takeWhile(dimension.inBound).toList ++
-        upRight.takeWhile(dimension.inBound).toList ++
-        downRight.takeWhile(dimension.inBound).toList
+      position :: positions(position, _.up.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.up.right).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down.right).takeWhile(dimension.inBound).toList
     }
   }
 
