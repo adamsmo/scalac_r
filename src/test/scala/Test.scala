@@ -39,4 +39,11 @@ class Test extends FunSuite with Matchers {
     result should have size 5
     result should contain allOf(Position(2, 2), Position(1, 2), Position(3, 2), Position(2, 3), Position(2, 1))
   }
+
+  test("Bishop board cover") {
+    val result = Bishop.getCovered(Dimension(3, 3), Position(2, 2))
+
+    result should have size 5
+    result should contain allOf(Position(2, 2), Position(1, 1), Position(3, 1), Position(1, 3), Position(3, 3))
+  }
 }

@@ -13,12 +13,14 @@ package object Figures {
     def right = Position(x, y + 1)
   }
 
-  case class Dimension(x: Int, y: Int)
+  case class Dimension(x: Int, y: Int) {
+    def inBound(pos: Position): Boolean = pos.x > 0 && pos.x <= x && pos.y > 0 && pos.y <= y
+  }
 
   case class FigurePlacement(figure: Figure, position: Position)
 
   def trim(dimension: Dimension, positions: List[Position]) = {
-    positions.filter(pos => pos.x > 0 && pos.x <= dimension.x && pos.y > 0 && pos.y <= dimension.y)
+    positions.filter(dimension.inBound)
   }
 
   /**
@@ -27,6 +29,11 @@ package object Figures {
    */
   abstract case class Figure(priority: Int, short: String) {
     def getCovered(dimension: Dimension, position: Position): List[Position]
+
+    def positions(position: Position, direction: Position => Position): Stream[Position] = {
+      val result: Stream[Position] = direction(position) #:: result.map(direction)
+      result
+    }
 
     override def toString = short
   }
@@ -40,27 +47,31 @@ package object Figures {
 
   object Rook extends Figure(3, "R") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      lazy val up: Stream[Position] = position.up #:: up.map(p => p.up)
-      lazy val down: Stream[Position] = position.down #:: down.map(p => p.down)
-      lazy val left: Stream[Position] = position.left #:: left.map(p => p.left)
-      lazy val right: Stream[Position] = position.right #:: right.map(p => p.right)
-
-      position :: up.takeWhile(pos => pos.x <= dimension.x).toList ++
-        down.takeWhile(pos => pos.x > 0).toList ++
-        left.takeWhile(pos => pos.y > 0).toList ++
-        right.takeWhile(pos => pos.y <= dimension.y).toList
+      position :: positions(position, _.up).takeWhile(dimension.inBound).toList ++
+        positions(position, _.down).takeWhile(dimension.inBound).toList ++
+        positions(position, _.left).takeWhile(dimension.inBound).toList ++
+        positions(position, _.right).takeWhile(dimension.inBound).toList
     }
   }
 
   object Queen extends Figure(4, "Q") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
+
       List()
     }
   }
 
   object Bishop extends Figure(2, "B") {
     def getCovered(dimension: Dimension, position: Position): List[Position] = {
-      List()
+      lazy val upLeft: Stream[Position] = position.up.left #:: upLeft.map(p => p.up.left)
+      lazy val downLeft: Stream[Position] = position.down.left #:: downLeft.map(p => p.down.left)
+      lazy val upRight: Stream[Position] = position.up.right #:: upRight.map(p => p.up.right)
+      lazy val downRight: Stream[Position] = position.down.right #:: downRight.map(p => p.down.right)
+
+      position :: upLeft.takeWhile(dimension.inBound).toList ++
+        downLeft.takeWhile(dimension.inBound).toList ++
+        upRight.takeWhile(dimension.inBound).toList ++
+        downRight.takeWhile(dimension.inBound).toList
     }
   }
 
