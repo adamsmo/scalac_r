@@ -1,14 +1,21 @@
 # scalac_r
 
 #### solution for 7×7 board with 2 Kings, 2 Queens, 2 Bishops and 1 Knight
-from `sbt` run comand
-`run --N 7 --M 7 --countOnly -f K=2,Q=2,B=2,N=1`
-
 3 063 828 of unique configurations - calculated in 56s
 
 for printing out all solutions 
+
 from `sbt` run comand
+
 `run --N 7 --M 7 -f K=2,Q=2,B=2,N=1`
+
+
+for calculating number of unique configurations
+
+from `sbt` run comand
+
+`run --N 7 --M 7 --countOnly -f K=2,Q=2,B=2,N=1`
+
 
 #### Program help 
 ```
