@@ -6,7 +6,7 @@ import com.typesafe.scalalogging._
  */
 package object Solver extends LazyLogging {
 
-  type Solution = String
+  type Solution = List[FigurePlacement]
 
   /**
    *
@@ -18,16 +18,6 @@ package object Solver extends LazyLogging {
   def solve(M: Int, N: Int, figures: List[(Int, Figure)]): List[Solution] = {
     //first pic figures that covers larger area of the board
     solveAcc(Board(M, N), figures.sortBy { case (_, fig) => -fig.priority }, List(), Set())
-  }
-
-  private def possible(board: Board, fig: Figure, position: Position, placements: List[Position]): Boolean =
-    fig.getCovered(board, position) find (pos => placements.contains(pos)) match {
-      case Some(_) => false
-      case None => true
-    }
-
-  def present(board: Board, placements: List[FigurePlacement]): List[Solution] = {
-    List("")
   }
 
   def combinationAllowed(figure: Figure, board: Board, placements: List[Position])(positions: Seq[Position]): Boolean = {
@@ -48,7 +38,7 @@ package object Solver extends LazyLogging {
           .filter(combinationAllowed(fig, board, placementsAsPositions))
 
         if (allowedFiguresPlacement.isEmpty) {
-          List()
+          Nil
         } else {
           val solved = for (
             placement <- allowedFiguresPlacement
@@ -58,9 +48,31 @@ package object Solver extends LazyLogging {
           solved.flatMap(b => b).toList
         }
 
-      case Nil => present(board, placements)
+      case Nil => List(placements)
 
     }
+
+  def printFigures(s: Solution, b: Board) = {
+    val posToFigMap = s.map(fp => fp.position -> fp.figure).toMap
+
+    val lines = for (
+      x <- 1 to b.x
+
+    ) yield {
+        val line = for (
+          y <- 1 to b.y
+        ) yield {
+            posToFigMap.get(Position(x, y)) match {
+              case Some(fig: Figure) => fig.short
+              case None => "-"
+            }
+          }
+
+        line.mkString("")
+      }
+
+    lines.mkString("\n")
+  }
 
   def main(args: Array[String]) {
     //7×7 board with 2 Kings, 2 Queens, 2 Bishops and 1 Knight

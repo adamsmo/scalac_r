@@ -1,11 +1,13 @@
 import org.scalatest.{Matchers, FunSuite}
 import Figures._
+import Solver._
 
 /**
  * Created by adam on 17.04.2015.
  */
 
 class Test extends FunSuite with Matchers {
+
 
   test("example with 3x3, 2 Kings, 2 Rook") {
     val result = Solver.solve(3, 3, List((2, King), (2, Rook)))
@@ -17,13 +19,13 @@ class Test extends FunSuite with Matchers {
 
     result should have size 4
 
-    result should contain allOf(
+    result map(printFigures(_, Board(3,3))) should contain allOf(
       """K-K
         |---
         |-R-""".stripMargin,
       """K--
         |--R
-        |k--""".stripMargin,
+        |K--""".stripMargin,
       """--K
         |R--
         |--K""".stripMargin,
@@ -31,6 +33,7 @@ class Test extends FunSuite with Matchers {
         |---
         |K-K""".stripMargin
       )
+
   }
 
   test("Rook board cover") {
