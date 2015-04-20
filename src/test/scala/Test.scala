@@ -19,21 +19,72 @@ class Test extends FunSuite with Matchers {
 
     result should have size 4
 
-    result map(printFigures(_, Board(3,3))) should contain allOf(
+    result map (printFigures(_, Board(3, 3))) should contain allOf(
       """K-K
         |---
         |-R-""".stripMargin,
+
       """K--
         |--R
         |K--""".stripMargin,
+
       """--K
         |R--
         |--K""".stripMargin,
+
       """-R-
         |---
         |K-K""".stripMargin
       )
 
+  }
+
+  test("example with 4x4, 2 Rook, 4 Knights") {
+    val result = Solver.solve(4, 4, List((2, Rook), (4, Knight)))
+
+    result should have size 8
+
+    result map (printFigures(_, Board(4, 4))) should contain allOf(
+      """-N-N
+        |--R-
+        |-N-N
+        |R---""".stripMargin,
+
+      """-N-N
+        |R---
+        |-N-N
+        |--R-""".stripMargin,
+
+      """R---
+        |-N-N
+        |--R-
+        |-N-N""".stripMargin,
+
+      """--R-
+        |-N-N
+        |R---
+        |-N-N""".stripMargin,
+
+      """-R--
+        |N-N-
+        |---R
+        |N-N-""".stripMargin,
+
+      """---R
+        |N-N-
+        |-R--
+        |N-N-""".stripMargin,
+
+      """N-N-
+        |---R
+        |N-N-
+        |-R--""".stripMargin,
+
+      """N-N-
+        |-R--
+        |N-N-
+        |---R""".stripMargin
+      )
   }
 
   test("Rook board cover") {
