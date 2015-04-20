@@ -89,4 +89,6 @@ package object Figures {
     }
   }
 
+  def allFigures = Map("K" -> King, "R" -> Rook, "Q" -> Queen, "B" -> Bishop, "N" -> Knight)
+
 }

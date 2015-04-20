@@ -14,12 +14,27 @@ class Test extends FunSuite with Matchers {
     result should have size 0
   }
 
+  test("example with 2x2, 4 Knights") {
+    val result = Solver.solve(2, 2, List((4, Knight)))
+    result should have size 1
+
+    result map (printFigures(_, Board(2, 2))) should contain only
+      """NN
+        |NN""".stripMargin
+
+  }
+
+  test("example with 2x2, 5 Knights") {
+    val result = Solver.solve(2, 2, List((5, Knight)))
+    result should have size 0
+  }
+
   test("example with 3x3, 2 Kings, 1 Rook") {
     val result = Solver.solve(3, 3, List((2, King), (1, Rook)))
 
     result should have size 4
 
-    result map (printFigures(_, Board(3, 3))) should contain allOf(
+    result map (printFigures(_, Board(3, 3))) should contain only(
       """K-K
         |---
         |-R-""".stripMargin,
@@ -44,7 +59,7 @@ class Test extends FunSuite with Matchers {
 
     result should have size 8
 
-    result map (printFigures(_, Board(4, 4))) should contain allOf(
+    result map (printFigures(_, Board(4, 4))) should contain only(
       """-N-N
         |--R-
         |-N-N

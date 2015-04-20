@@ -1,10 +1,9 @@
 import Figures._
-import com.typesafe.scalalogging._
 
 /**
  * Created by adam on 17.04.2015.
  */
-package object Solver extends LazyLogging {
+package object Solver {
 
   type Solution = List[FigurePlacement]
 
@@ -74,12 +73,4 @@ package object Solver extends LazyLogging {
     lines.mkString("\n")
   }
 
-  def main(args: Array[String]) {
-    //7×7 board with 2 Kings, 2 Queens, 2 Bishops and 1 Knight
-
-    val t0 = System.nanoTime()
-    logger.debug(solve(7, 7, List((2, King), (2, Queen), (2, Bishop), (1, Knight))).size + "")
-    val t1 = System.nanoTime()
-    logger.debug("Elapsed time: " + ((t1 - t0) / 1000000000) + "s")
-  }
 }
