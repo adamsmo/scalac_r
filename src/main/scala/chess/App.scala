@@ -14,13 +14,13 @@ object App {
       case Some(config) =>
         val figs = config.figures.toList.map { case (name, count) => (count, allFigures(name)) }
 
-        val t0 = System.nanoTime()
+        val before = System.nanoTime()
         val solution = solve(config.M, config.N, figs)
-        val t1 = System.nanoTime()
+        val after = System.nanoTime()
 
         if (config.countOnly) {
           println(solution.size + "")
-          println("Elapsed time: " + ((t1 - t0) / 1000000000) + "s")
+          println("Elapsed time: " + ((after - before) / 1000000000) + "s")
         } else {
           solution.foreach(s => println("\n" + printFigures(s, Board(config.M, config.N))))
         }
